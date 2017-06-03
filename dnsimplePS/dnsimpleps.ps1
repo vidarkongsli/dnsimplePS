@@ -6,6 +6,7 @@ function ToAuthorizationHeader($t) {
 }
 
 function CallDnsimpleApi ($method, $uri, $body, [System.Security.SecureString]$AccessToken) {
+    Write-Debug "Requesting: $method $uri Body: $body"
     Invoke-RestMethod -Method $method -Uri $uri `
         -Headers (ToAuthorizationHeader $AccessToken) `
         -Body $body -ContentType 'application/json' `
@@ -26,7 +27,6 @@ function Add-ZoneRecord {
         [Parameter(Mandatory,Position=3)]
         $Content,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
-        [ValidateRange(10000,99999)]
         [int]$Account,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
         [System.Security.SecureString]$AccessToken
@@ -41,10 +41,9 @@ function Add-ZoneRecord {
             'type' = $RecordType
         } | ConvertTo-Json
 
-        $uri = "https://api.dnsimple.com/v2/$Account/zones/$Zone/records"
-        Write-Debug "Calling Uri $uri with payload $data"
-
-        CallDnsimpleApi -Method 'POST' -Uri $uri -Body $data -AccessToken $AccessToken
+        CallDnsimpleApi -Method 'POST' `
+            -Uri "https://api.dnsimple.com/v2/$Account/zones/$Zone/records" `
+            -Body $data -AccessToken $AccessToken
     }
     End {
         Write-debug "End"
@@ -57,7 +56,6 @@ function Get-ZoneRecord {
         [Parameter(Mandatory,Position=0)]
         [ValidateScript({[Uri]::CheckHostName($_) -eq 'Dns'})]
         $Zone,
-
         [Parameter(Mandatory=$false,Position=1,ParameterSetName='ListRecords')]
         [ValidateSet('A','ALIAS','CNAME','MX','SPF','URL','TXT','NS','SRV','NAPTR','PTR','AAAA','SSHFP','HINFO','POOL','CAA')]
         $RecordType,
@@ -70,7 +68,6 @@ function Get-ZoneRecord {
         $Id,
 
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
-        [ValidateRange(10000,99999)]
         [int]$Account,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
         [System.Security.SecureString]$AccessToken
@@ -91,7 +88,6 @@ function Get-ZoneRecord {
     } else  {
         $Uri = "https://api.dnsimple.com/v2/$Account/zones/$Zone/records/$Id"
     }
-    Write-Debug "Requesting: GET $Uri"
     CallDnsimpleApi -Method Get -Uri $Uri -AccessToken $AccessToken
 }
 
@@ -104,7 +100,6 @@ function Remove-ZoneRecord {
         [Parameter(Mandatory,Position=1)]
         $Id,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
-        [ValidateRange(10000,99999)]
         [int]$Account,
         [Parameter(Mandatory,ValueFromPipelineByPropertyName)]
         [System.Security.SecureString]$AccessToken)
@@ -124,7 +119,6 @@ function Write-AccessToken {
         [Parameter(Mandatory,Position=0)]
         [string]$AccessToken,
         [Parameter(Mandatory,Position=1)]
-        [ValidateRange(10000,99999)]
         [int]$Account,
         [Parameter(Mandatory=$false)]
         $Path = "$(join-path (split-path $PROFILE) '.dnsimple.tokens')"
@@ -154,7 +148,6 @@ function Write-AccessToken {
 function Read-AccessToken {
     param(
         [Parameter(Mandatory,Position=0)]
-        [ValidateRange(10000,99999)]
         [int]$Account,
         [Parameter(Mandatory=$false)]
         $Path = "$(join-path (split-path $PROFILE) '.dnsimple.tokens')"
