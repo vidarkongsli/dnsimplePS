@@ -1,6 +1,6 @@
 # dnsimplePS
 PowerShell client library for [Dnsimple API](https://developer.dnsimple.com/v2/).
-
+See also this blogpost: [Manage your DNS records with PowerShell](https://www.kongsli.net/2017/11/08/manage-your-dns-…-with-powershell/)
 ## Installation
 ```posh
 Install-Module dnsimplePS -Scope CurrentUser
