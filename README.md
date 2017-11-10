@@ -1,4 +1,6 @@
 # dnsimplePS
+![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/vidarkongsli/dnsimplePS)
+
 PowerShell client library for [Dnsimple API](https://developer.dnsimple.com/v2/).
 See also this blogpost: [Manage your DNS records with PowerShell](https://www.kongsli.net/2017/11/08/manage-your-dns-records-with-powershell/)
 ## Installation
